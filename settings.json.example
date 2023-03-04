@@ -3,5 +3,6 @@
   "client_id": "",
   "redirect_uri": "http://localhost:3000",
   "webhook": "https://discord.com/webhook/XXXXX",
-  "port": 80
+  "port": 80,
+  "HypixelApiKey":""
 }

