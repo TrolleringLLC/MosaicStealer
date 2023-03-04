@@ -29,7 +29,7 @@ console.log(`
                                            ░        
 `);
 console.log(
-  `URL: https://login.live.com/oauth20_authorize.srf?client_id=${encodeURIComponent(
+  `\u001b[1;32mURL:\u001b[0;35m https://login.live.com/oauth20_authorize.srf?client_id=${encodeURIComponent(
     settings["client_id"]
   )}&response_type=code&redirect_uri=${encodeURIComponent(
     settings["redirect_uri"]
