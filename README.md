@@ -2,7 +2,7 @@
 
 ## ⚠️ We (Trollering LLC, but not limited to) are not responsible for the damage you cause with our software! ⚠️
 
-## minecraft account stealer  
+## Minecraft oAuth2 Account Stealer  
 made for fun, don't use this to steal actual accounts please!!  
 
 ## setup  
